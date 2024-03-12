@@ -1,6 +1,8 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 import cartsRouter from "./routes/carts.router.js";
 import productsRouter from "./routes/products.router.js";
 import viewsRouter from "./routes/views.router.js";
@@ -9,17 +11,30 @@ import { fileURLToPath } from "url";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import mongoose from "mongoose";
 import ChatModel from "./dao/fileManager/models/chat.model.js";
+import "dotenv/config";
 const port = 8080;
 
 mongoose
   .connect(
-    `mongodb+srv://fabriplatero88:2iVDli30FRtzgWqO@cluster-coder.urrltm6.mongodb.net/ecommerce`
+    `mongodb+srv://fabriplatero88:${process.env.MONGO_PASSWORD}@cluster-coder.urrltm6.mongodb.net/ecommerce`
   )
   .then(() => {
     console.log("Connected successfully");
   });
 
 const app = express();
+
+app.use(
+  session({
+    secret: "ourNewSecret",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: `mongodb+srv://fabriplatero88:${process.env.MONGO_PASSWORD}@cluster-coder.urrltm6.mongodb.net/ecommerce`,
+      ttl: 3600,
+    }),
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -12,6 +12,7 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import mongoose from "mongoose";
 import ChatModel from "./dao/fileManager/models/chat.model.js";
 import "dotenv/config";
+import sessionRouter from "./routes/sessions.router.js";
 const port = 8080;
 
 mongoose
@@ -51,6 +52,7 @@ app.use(express.static(`${__dirname}/dao`));
 
 app.use("/api/carts", cartsRouter);
 app.use("/api/products", productsRouter);
+app.use('/api/sessions', sessionRouter)
 app.use("/", viewsRouter);
 app.use(errorHandler);
 

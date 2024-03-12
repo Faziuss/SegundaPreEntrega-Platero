@@ -27,7 +27,7 @@ router.get("/products", async (req, res) => {
 
   const products = docs;
 
-  return res.render("products", { products, ...rest });
+  return res.render("products", { products, ...rest, user: req.session.user });
 });
 
 router.get("/carts/:cid", async (req, res) => {
@@ -39,5 +39,13 @@ router.get("/carts/:cid", async (req, res) => {
 
   return res.render("carts", { carts: carts.map((item) => item.toJSON()) });
 });
+
+router.get("/register", (_req,res)=>{
+  res.render('register')
+})
+
+router.get("/login", (_req,res)=>{
+  res.render('login')
+})
 
 export default router;

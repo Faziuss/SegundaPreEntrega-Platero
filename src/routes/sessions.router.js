@@ -38,13 +38,23 @@ sessionRouter.post("/login", async (req, res) => {
     name: `${user.first_name} ${user.last_name}`,
     email: user.email,
     age: user.age,
-    roles: user.roles
+    roles: user.roles,
   };
   res.status(201).send({
     status: "sucess",
     payload: req.session.user,
     message: "Logeado Correctamente",
   });
+});
+
+sessionRouter.get("/logout", async (req, res) => {
+  req.session.destroy((err) => {
+    if (err)
+      throw new AppError(500, {
+        message: "Hubo un error al intentar destruir la session",
+      });
+  });
+  res.redirect("/login");
 });
 
 export default sessionRouter;

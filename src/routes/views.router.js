@@ -6,6 +6,21 @@ const router = Router();
 const managerProducts = new Products();
 const managerCarts = new Carts();
 
+const publicAccess = (req, res, next) => {
+  if (req.session.user) return res.redirect("/");
+
+  next();
+};
+
+const privateAcess = (req, res, next) => {
+  if (!req.session.user) {
+    console.log("not logged in");
+    return res.redirect("/login");
+  }
+
+  next();
+};
+
 router.get("/", async (_req, res) => {
   const products = await managerProducts.getProducts();
 
@@ -22,7 +37,7 @@ router.get("/chat", async (_req, res) => {
   return res.render("chat", {});
 });
 
-router.get("/products", async (req, res) => {
+router.get("/products", privateAcess, async (req, res) => {
   const { docs, ...rest } = await managerProducts.getProductsApi(req.query);
 
   const products = docs;
@@ -40,12 +55,12 @@ router.get("/carts/:cid", async (req, res) => {
   return res.render("carts", { carts: carts.map((item) => item.toJSON()) });
 });
 
-router.get("/register", (_req,res)=>{
-  res.render('register')
-})
+router.get("/register", publicAccess, (_req, res) => {
+  res.render("register");
+});
 
-router.get("/login", (_req,res)=>{
-  res.render('login')
-})
+router.get("/login", publicAccess, (_req, res) => {
+  res.render("login");
+});
 
 export default router;

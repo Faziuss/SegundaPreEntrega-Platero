@@ -21,19 +21,19 @@ const privateAcess = (req, res, next) => {
   next();
 };
 
-router.get("/", async (_req, res) => {
+router.get("/", privateAcess, async (_req, res) => {
   const products = await managerProducts.getProducts();
 
   return res.render("home", { products });
 });
 
-router.get("/realTimeProducts", async (_req, res) => {
+router.get("/realTimeProducts", privateAcess, async (_req, res) => {
   const products = await managerProducts.getProducts();
 
   return res.render("realTimeProducts", { products });
 });
 
-router.get("/chat", async (_req, res) => {
+router.get("/chat", privateAcess, async (_req, res) => {
   return res.render("chat", {});
 });
 

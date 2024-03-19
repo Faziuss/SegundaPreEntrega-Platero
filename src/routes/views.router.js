@@ -15,7 +15,7 @@ const publicAccess = (req, res, next) => {
 const privateAcess = (req, res, next) => {
   if (!req.session.user) {
     console.log("not logged in");
-    return res.redirect("/login");
+    return res.redirect("/register");
   }
 
   next();

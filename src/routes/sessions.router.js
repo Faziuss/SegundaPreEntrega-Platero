@@ -1,10 +1,11 @@
 import { Router } from "express";
 import userModel from "../dao/fileManager/models/user.model.js";
 import { AppError } from "../helpers/AppError.js";
+import { createHash, isValidPassword } from "../utils.js";
 
 const sessionRouter = Router();
 
-sessionRouter.post("/register", async (req, res) => {
+sessionRouter.post("/register", async (req, res, next) => {
   const { first_name, last_name, email, age, password } = req.body;
 
   if (!first_name || !last_name || !email || !age || !password) {
@@ -16,22 +17,28 @@ sessionRouter.post("/register", async (req, res) => {
     last_name,
     email,
     age,
-    password,
+    password: createHash(password),
   });
 
   res.status(201).send({ status: "sucess", message: "Usuario Registrado" });
 });
 
-sessionRouter.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+sessionRouter.post("/login", async (req, res, next) => {
+  try {
+
+    const { email, password } = req.body;
 
   if (!email || !password) {
     throw new AppError(400, { message: "Missing data" });
   }
 
-  const user = await userModel.findOne({ email, password });
+  const user = await userModel.findOne({ email });
   if (!user) {
     throw new AppError(401, { message: "Credenciales incorrectas" });
+  }
+
+  if (!isValidPassword(user, password)) {
+    throw new AppError(401, { message: "Contraseña Incorrecta" });
   }
 
   req.session.user = {
@@ -45,6 +52,11 @@ sessionRouter.post("/login", async (req, res) => {
     payload: req.session.user,
     message: "Logeado Correctamente",
   });
+    
+  } catch (error) {
+    return next(error)
+  }
+  
 });
 
 sessionRouter.get("/logout", async (req, res) => {

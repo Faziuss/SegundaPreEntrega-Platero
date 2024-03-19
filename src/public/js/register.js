@@ -10,6 +10,9 @@ registerForm.addEventListener("submit", async (e) => {
     data.forEach((value, key) => (obj[key] = value));
     let result = await axios.post("/api/sessions/register", obj);
     console.log(result.data.message);
+    if (result.status === 201) {
+      window.location.replace('/login');
+    }
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log(error);

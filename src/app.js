@@ -13,6 +13,8 @@ import mongoose from "mongoose";
 import ChatModel from "./dao/fileManager/models/chat.model.js";
 import "dotenv/config";
 import sessionRouter from "./routes/sessions.router.js";
+import passport from "passport";
+import initializePassport from "./config/passport.config.js"
 const port = 8080;
 
 mongoose
@@ -36,6 +38,10 @@ app.use(
     }),
   })
 );
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

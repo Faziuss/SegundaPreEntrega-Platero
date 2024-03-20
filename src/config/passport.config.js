@@ -19,7 +19,6 @@ const initializePassport = () => {
         try {
           console.log(profile);
           let user = await userModel.findOne({ email: profile._json.email });
-          console.log(user);
           if (!user) {
             let newUser = {
               first_name: profile._json.name,
@@ -48,10 +47,6 @@ const initializePassport = () => {
       },
       async (req, username, password, done) => {
         const { first_name, last_name, email, age } = req.body;
-
-        /* if (!first_name || !last_name || !email || !age || !password) {
-            throw new AppError(400, { message: "Missing data" });
-          } */
 
         let user = await userModel.findOne({ email: username });
 
@@ -100,15 +95,15 @@ const initializePassport = () => {
       }
     )
   );
-
-  passport.serializeUser((user, done) => {
-    done(null, user._id);
-  });
-
-  passport.deserializeUser(async (id, done) => {
-    let user = await userModel.findById(id);
-    done(null, user);
-  });
 };
+
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  let user = await userModel.findById(id);
+  done(null, user);
+});
 
 export default initializePassport;
